@@ -2,6 +2,14 @@ function model(d::Data, optimizer)
     I = collect(1:length(d.weight))
     bpp = BlockModel(optimizer)
 
+    G = [
+    0 1 1 0 0 0;
+    1 0 1 0 0 0;
+    1 1 0 1 1 1;
+    0 0 1 0 0 0;
+    0 0 1 0 0 0;
+    0 0 1 0 0 0;]
+    
     @axis(BinsType, [1])
 
     @variable(bpp, x[k in BinsType, i in I], Bin)
@@ -9,7 +17,8 @@ function model(d::Data, optimizer)
 
     @constraint(bpp, sp[i in I], sum(x[k, i] for k in BinsType) == 1)
     @constraint(bpp, ks[k in BinsType], sum(d.weight[i] * x[k, i] for i in I) - y[k] * d.Q <= 0)
-    
+    @constraint(bpp, cf[i in I, j in I; G[i,j] == 1 ; k in BinsType, ], x[k, i] + x[k, j] - y[k] <= 0)  # 如何把冲突约束放进来
+
     @objective(bpp, Min, sum(y[k] for k in BinsType))
 
     @dantzig_wolfe_decomposition(bpp, dec, BinsType)
