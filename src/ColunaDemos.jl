@@ -7,6 +7,6 @@ module ColunaDemos
     include("UncapacitatedFacilityLocation/demo.jl")
     include("CapacitatedVehicleRouting/demo.jl")
     include("BinPacking/demo.jl")
-    include("BinPackingConflict/demo.jl")
+    # include("BinPackingConflict/demo.jl")
 
 end # module
